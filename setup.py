@@ -12,7 +12,7 @@ setup(
             'dir-tree=dir_tree.directory_tree:main',  # Adds `dir-tree` command to the CLI
         ],
     },
-    author='Your Name',
+    author='krausality',
     author_email='krausality42@gmail.com',
     description='A package for generating directory trees with exclusions.',
     long_description=open('README.md').read(),
