@@ -18,6 +18,74 @@ You can install the `dir_tree` package locally by cloning the repository and run
 pip install .
 ```
 
+
+## 🛠  Development Mode (Editable Installs)
+
+If you plan to **develop or modify this project locally**, it's recommended to use an **editable install**. This allows Python to load the package **directly from your source directory**, so any code changes are reflected immediately — no need to reinstall after every edit.
+
+### Setup
+
+```bash
+cd dir_tree
+python -m venv .venv
+source .venv/bin/activate      # or .venv\Scripts\activate on Windows
+pip install --editable .
+````
+
+Once installed, you can run the tool in either of the following ways:
+
+### ✅ Option 1: Module Invocation
+
+```bash
+python -m dir_tree COMMAND ...
+```
+
+  - Runs the package via the Python module system.
+  - Always works inside an activated virtual environment.
+
+### ✅ Option 2: Executable Invocation
+
+```bash
+dir_tree COMMAND ...
+```
+
+  - A **console script entry point** is automatically created during install.
+  - On Windows: creates `dir_tree.exe` in `.venv\Scripts\`
+  - On macOS/Linux: creates `dir_tree` in `.venv/bin/`
+
+💡 **Pro tip**: Check where the executable lives with:
+
+```bash
+where dir_tree    # on Windows
+which dir_tree    # on macOS/Linux
+```
+
+If the command isn’t found, make sure your virtual environment is activated and your PATH is correctly set.
+
+-----
+
+### Optional: Strict Editable Mode
+
+If you want more control over which files are actually included in the package (e.g. to detect missing modules or simulate a release install), enable **strict mode**:
+
+```bash
+pip install -e . --config-settings editable_mode=strict
+```
+
+In this mode:
+
+  - **New files won’t be exposed automatically** — you’ll need to reinstall to pick them up.
+  - The install behaves more like a production wheel, which is useful for debugging packaging issues.
+
+-----
+
+### Notes
+
+  - Code edits are reflected **immediately** in both normal and strict modes.
+  - Any changes to **dependencies**, **entry-points**, or **project metadata** require reinstallation.
+  - If you encounter import issues (especially with namespace packages), consider switching to a `src/`-based layout.  
+      See the Python Packaging Authority’s recommendations for [modern package structures](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/).
+
 ## Usage
 
 ### As a Python Library
@@ -204,3 +272,11 @@ Happy coding!
 8. **Contact**: How users can reach you for support or suggestions.
 
 This `README.md` provides comprehensive documentation to help users understand, install, and use your package effectively.
+
+
+---
+
+
+
+
+-----
