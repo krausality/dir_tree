@@ -6,6 +6,7 @@
 ## Features
 
 - **Directory Tree Generation**: Generate a visual and JSON representation of a directory structure.
+- **File Size Display**: Optionally display human-readable file sizes (B, KB, MB, GB, TB) next to file names.
 - **Exclusion Options**: Exclude specific directories and files or file patterns.
 - **Preferences Management**: Save and load preferences for exclusions.
 - **Command-Line Interface**: Use the tool directly from the command line.
@@ -101,8 +102,41 @@ prefs.update_preferences(exclude_dirs=["env", "venv"], exclude_files=["*.log"])
 prefs.save_preferences()  # Optionally save preferences for later use
 
 # Generate directory tree
-tree = DirectoryTree(root_dir="path/to/directory", exclude_dirs=prefs.prefs["EXCLUDE_DIRS"], exclude_files=prefs.prefs["EXCLUDE_FILES"])
+tree = DirectoryTree(
+    root_dir="path/to/directory", 
+    exclude_dirs=prefs.prefs["EXCLUDE_DIRS"], 
+    exclude_files=prefs.prefs["EXCLUDE_FILES"]
+)
 print(tree.to_json())
+```
+
+#### With File Sizes
+
+Display file sizes next to file names:
+
+```python
+from dir_tree import DirectoryTree
+
+# Generate tree with file sizes
+tree = DirectoryTree(
+    root_dir=".",
+    exclude_files={"*.pyc", "__pycache__"},
+    show_file_sizes=True  # Enable file size display
+)
+
+import json
+tree_data = json.loads(tree.to_json())
+print(tree_data['tree_print'])
+```
+
+**Output:**
+```
+project/
+├── README.md (8.6 KB)
+├── setup.py (902.0 B)
+└── src/
+    ├── main.py (2.3 KB)
+    └── utils.py (1.1 KB)
 ```
 
 ### Command-Line Interface (CLI)

@@ -10,13 +10,26 @@ class DirectoryTree:
     def __init__(self, root_dir: str,
                  exclude_dirs: Optional[Set[str]] = None,
                  exclude_files: Optional[Set[str]] = None,
-                 follow_symlinks_in_tree: bool = False):
+                 follow_symlinks_in_tree: bool = False,
+                 show_file_sizes: bool = False):
+        """
+        Initialize DirectoryTree.
+        
+        Args:
+            root_dir: Root directory to scan
+            exclude_dirs: Set of directory names to exclude
+            exclude_files: Set of file/directory patterns to exclude (fnmatch)
+            follow_symlinks_in_tree: Whether to follow symbolic links to directories
+            show_file_sizes: If True, display human-readable file sizes next to 
+                           file names in the tree output (e.g., "file.txt (1.2 KB)")
+        """
         self.root_dir = os.path.abspath(root_dir)
         # `exclude_dirs` von 4gpt ist jetzt immer ein leeres Set.
         # Alle Muster (für Dateien und Verzeichnisse) kommen über `exclude_files`.
         self.explicit_exclude_dir_names = exclude_dirs if exclude_dirs is not None else set()
         self.general_exclude_patterns = exclude_files if exclude_files is not None else set()
         self.follow_symlinks_in_tree = follow_symlinks_in_tree
+        self.show_file_sizes = show_file_sizes
         self.tree = {}
         self.tree_print_lines = [] # Zum Sammeln der Ausgabezeilen für tree_print
 
@@ -43,6 +56,32 @@ class DirectoryTree:
         
         # print(f"  -> NOT EXCLUDED: {item_name}")
         return False
+
+    def _format_size(self, size_bytes: int) -> str:
+        """
+        Convert bytes to human-readable format.
+        
+        Args:
+            size_bytes: File size in bytes
+            
+        Returns:
+            Formatted string like "1.5 KB", "2.3 MB", etc.
+            
+        Examples:
+            >>> self._format_size(100)
+            '100.0 B'
+            >>> self._format_size(1536)
+            '1.5 KB'
+            >>> self._format_size(1048576)
+            '1.0 MB'
+            >>> self._format_size(5242880)
+            '5.0 MB'
+        """
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if size_bytes < 1024.0:
+                return f"{size_bytes:.1f} {unit}"
+            size_bytes /= 1024.0
+        return f"{size_bytes:.1f} TB"
 
     def build_tree_recursive(self, current_dir: str, prefix: str = '') -> Dict[str, Any]:
         tree_structure = {}
@@ -103,7 +142,23 @@ class DirectoryTree:
                     new_prefix = prefix + ('    ' if is_last_item else '│   ')
                     tree_structure[item_name] = self.build_tree_recursive(item_path, new_prefix)
             else: # Datei, Symlink zu Datei oder etwas, das kein Verzeichnis ist
-                self.tree_print_lines.append(f"{prefix}{connector}{entry_display_name}")
+                final_display = entry_display_name
+                
+                if self.show_file_sizes:
+                    try:
+                        # os.path.getsize() follows symlinks automatically
+                        # This shows target file size, not symlink size
+                        size = os.path.getsize(item_path)
+                        size_str = self._format_size(size)
+                        final_display += f" ({size_str})"
+                    except (OSError, IOError):
+                        # Graceful degradation for:
+                        # - Permission denied
+                        # - File deleted during scan
+                        # - Broken symlinks
+                        pass
+                
+                self.tree_print_lines.append(f"{prefix}{connector}{final_display}")
                 tree_structure[item_name] = None # Repräsentiert eine Datei oder ein Blatt im Baum
 
         return tree_structure
