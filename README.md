@@ -1,7 +1,18 @@
 ```markdown
 # dir_tree
 
+![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)
+![Version](https://img.shields.io/badge/version-0.2.0-green)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
 `dir_tree` is a Python package that generates a directory tree structure in JSON format, with customizable options to exclude certain directories and files. It can be used as both a library in your Python projects and as a command-line tool.
+
+## ✨ What's New in v0.2.0
+
+- **File Size Display:** Optionally show human-readable file sizes (B, KB, MB, GB, TB) next to file names
+- One-line integration for existing code: `show_file_sizes=True`
+- CLI support: `dir-tree --show-file-sizes`
+- See [CHANGELOG.md](CHANGELOG.md) for full details
 
 ## Features
 
@@ -13,10 +24,26 @@
 
 ## Installation
 
-You can install the `dir_tree` package locally by cloning the repository and running:
+### From Source
+
+Clone the repository and install:
 
 ```bash
+git clone https://github.com/krausality/dir_tree.git
+cd dir_tree
 pip install .
+```
+
+### From GitHub (Specific Version)
+
+Install directly from a specific release:
+
+```bash
+# Latest version
+pip install git+https://github.com/krausality/dir_tree.git
+
+# Specific version
+pip install git+https://github.com/krausality/dir_tree.git@v0.2.0
 ```
 
 
@@ -171,6 +198,20 @@ Exclude specific files or file patterns:
 dir-tree --exclude-file "*.log" "*.tmp"
 ```
 
+#### Display File Sizes
+
+Show human-readable file sizes next to file names:
+
+```bash
+dir-tree --show-file-sizes
+```
+
+Or combine with other options:
+
+```bash
+dir-tree --dir /path/to/directory --exclude-file "*.pyc" --show-file-sizes
+```
+
 #### Saving and Loading Preferences
 
 Save the current exclusions as preferences:
@@ -191,11 +232,12 @@ The JSON output contains the following fields:
 
 - **`root`**: The name of the root directory.
 - **`tree`**: The directory structure as a nested dictionary.
-- **`tree_print`**: A visual representation of the directory tree in text form.
+- **`tree_print`**: A visual representation of the directory tree in text form (includes file sizes if enabled).
 - **`excluded_dirs`**: A list of directories that were excluded.
 - **`excluded_files`**: A list of files or file patterns that were excluded.
 
-Example JSON output:
+<details>
+<summary>Click to see full JSON output example</summary>
 
 ```json
 {
@@ -260,6 +302,8 @@ Example JSON output:
 }
 ```
 
+</details>
+
 ## Development
 
 If you want to contribute or make changes to this package, follow these steps:
@@ -275,19 +319,93 @@ If you want to contribute or make changes to this package, follow these steps:
     pip install -e .
     ```
 
-3. **Run tests and make changes**:
-    - You can create tests to verify the functionality and make sure everything works as expected.
+3. **Run tests**:
+    ```bash
+    # Run the test suite
+    python feature_development/file_size_display/test_file_sizes.py
+    
+    # Run demo to see file sizes in action
+    python feature_development/file_size_display/demo_file_sizes.py
+    ```
 
-4. **Submit a pull request**:
+4. **Make your changes** and ensure tests pass
+
+4. **Make your changes** and ensure tests pass
+
+5. **Submit a pull request**:
     - Feel free to fork the repository and submit a pull request with your changes.
 
-## License
+---
+
+## 🔄 Release Process (For Maintainers)
+
+### How to Create a New Release
+
+When releasing a new version, follow these steps:
+
+1. **Update the version in `setup.py`:**
+   ```python
+   setup(
+       name='dir_tree',
+       version='0.3.0',  # Increment version
+       ...
+   )
+   ```
+
+2. **Update `CHANGELOG.md`:**
+   - Add a new section for the version
+   - Document all changes
+
+3. **Commit the changes:**
+   ```bash
+   git add setup.py CHANGELOG.md
+   git commit -m "chore: Bump version to 0.3.0"
+   ```
+
+4. **Create and push a git tag:**
+   ```bash
+   # Create annotated tag
+   git tag -a v0.3.0 -m "Release v0.3.0: Description of changes"
+   
+   # Push the tag to GitHub
+   git push origin v0.3.0
+   ```
+
+5. **Verify the release:**
+   ```bash
+   git describe --tags  # Should show v0.3.0
+   ```
+
+### Version Numbering
+
+We follow [Semantic Versioning](https://semver.org/):
+- **MAJOR** (X.0.0): Breaking changes
+- **MINOR** (0.X.0): New features, backward compatible
+- **PATCH** (0.0.X): Bug fixes, backward compatible
+
+**Example:**
+- `0.1.0` → Initial release
+- `0.2.0` → Added file size display feature (new feature, backward compatible)
+- `0.2.1` → Would be a bug fix
+- `1.0.0` → Would be the first stable release or a breaking change
+
+---
+
+## 📋 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of all changes.
+
+---
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contact
+## 📞 Support & Contact
 
-If you have any questions or suggestions, please feel free to reach out to me at `your.email@example.com`.
+- **Issues & Bug Reports:** [GitHub Issues](https://github.com/krausality/dir_tree/issues)
+- **Email:** krausality42@gmail.com
+- **Repository:** [github.com/krausality/dir_tree](https://github.com/krausality/dir_tree)
 
 ---
 

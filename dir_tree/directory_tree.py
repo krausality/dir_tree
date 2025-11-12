@@ -200,6 +200,8 @@ def main(): # CLI für dir-tree standalone
                         help='Load saved exclusion preferences.')
     parser.add_argument('--follow-symlinks-in-tree', action='store_true',
                         help='Follow symbolic links to directories when generating the tree structure view.')
+    parser.add_argument('--show-file-sizes', action='store_true',
+                        help='Display human-readable file sizes next to file names in the tree output.')
 
     args = parser.parse_args()
     prefs = Preferences()
@@ -223,7 +225,8 @@ def main(): # CLI für dir-tree standalone
         root_dir=args.dir,
         exclude_dirs=prefs.prefs.get("EXCLUDE_DIRS", set()), # Explizite Verzeichnisnamen
         exclude_files=prefs.prefs.get("EXCLUDE_FILES", set()), # Muster für Dateien und Verzeichnisse
-        follow_symlinks_in_tree=args.follow_symlinks_in_tree
+        follow_symlinks_in_tree=args.follow_symlinks_in_tree,
+        show_file_sizes=args.show_file_sizes
     )
 
     tree_json_str = tree_generator.to_json()
